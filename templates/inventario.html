@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventario - Sistema de Inventario Deportivo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/styles.css') }}"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Navbar -->
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <i class="fas fa-university"></i>
+          <span>Fundación Escuela Tecnológica de Neiva</span>
+        </div>
+        <div class="navbar-menu">
+          <a href="{{ url_for('dashboard') }}" class="nav-link"
+            ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+          >
+          <a href="{{ url_for('inventario') }}" class="nav-link active"
+            ><i class="fas fa-boxes"></i> Inventario</a
+          >
+          <a href="{{ url_for('estudiantes') }}" class="nav-link"
+            ><i class="fas fa-users"></i> Estudiantes</a
+          >
+          <a href="{{ url_for('prestamos') }}" class="nav-link"
+            ><i class="fas fa-handshake"></i> Préstamos</a
+          >
+          <a href="{{ url_for('reportes') }}" class="nav-link"
+            ><i class="fas fa-chart-bar"></i> Reportes</a
+          >
+          <a href="{{ url_for('logout') }}" class="nav-link logout"
+            ><i class="fas fa-sign-out-alt"></i> Salir</a
+          >
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="container-fluid">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title"><i class="fas fa-boxes"></i> Inventario</h1>
+            <a href="{{ url_for('agregar_implemento') }}" class="btn-add">
+              <i class="fas fa-plus"></i> Agregar Implemento
+            </a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-modern">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th>Total</th>
+                  <th>Disponible</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for implemento in implementos %}
+                <tr>
+                  <td>{{ implemento[0] }}</td>
+                  <td>{{ implemento[1] }}</td>
+                  <td>{{ implemento[2] or 'Sin categoría' }}</td>
+                  <td>{{ implemento[3] }}</td>
+                  <td>{{ implemento[4] }}</td>
+                  <td>
+                    <span
+                      class="badge badge-{{ 'success' if implemento[5] == 'disponible' else 'warning' if implemento[5] == 'prestado' else 'danger' }}"
+                    >
+                      {{ implemento[5] }}
+                    </span>
+                  </td>
+                  <td>
+                    <a
+                      href="{{ url_for('editar_implemento', id=implemento[0]) }}"
+                      class="btn-action btn-edit"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <a
+                      href="{{ url_for('eliminar_implemento', id=implemento[0]) }}"
+                      class="btn-action btn-delete"
+                      onclick="
+                        return confirm(
+                          '¿Estás seguro de eliminar este implemento?',
+                        );
+                      "
+                    >
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrar Préstamo - Sistema de Inventario Deportivo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/styles.css') }}"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Navbar -->
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <i class="fas fa-university"></i>
+          <span>Fundación Escuela Tecnológica de Neiva</span>
+        </div>
+        <div class="navbar-menu">
+          <a href="{{ url_for('dashboard') }}" class="nav-link"
+            ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+          >
+          <a href="{{ url_for('inventario') }}" class="nav-link"
+            ><i class="fas fa-boxes"></i> Inventario</a
+          >
+          <a href="{{ url_for('estudiantes') }}" class="nav-link"
+            ><i class="fas fa-users"></i> Estudiantes</a
+          >
+          <a href="{{ url_for('prestamos') }}" class="nav-link active"
+            ><i class="fas fa-handshake"></i> Préstamos</a
+          >
+          <a href="{{ url_for('reportes') }}" class="nav-link"
+            ><i class="fas fa-chart-bar"></i> Reportes</a
+          >
+          <a href="{{ url_for('logout') }}" class="nav-link logout"
+            ><i class="fas fa-sign-out-alt"></i> Salir</a
+          >
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="container-fluid">
+          <h1 class="page-title">
+            <i class="fas fa-plus"></i> Registrar Préstamo
+          </h1>
+
+          <div class="form-card">
+            <form method="POST">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="estudiante_id">Estudiante</label>
+                    <select id="estudiante_id" name="estudiante_id" required>
+                      <option value="">Seleccionar estudiante</option>
+                      {% for estudiante in estudiantes %}
+                      <option value="{{ estudiante[0] }}">
+                        {{ estudiante[1] }} - {{ estudiante[2] }} {{
+                        estudiante[3] }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="implemento_id">Implemento</label>
+                    <select id="implemento_id" name="implemento_id" required>
+                      <option value="">Seleccionar implemento</option>
+                      {% for implemento in implementos %}
+                      <option value="{{ implemento[0] }}">
+                        {{ implemento[1] }} (Disponible: {{ implemento[4] }})
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input
+                      type="number"
+                      id="cantidad"
+                      name="cantidad"
+                      min="1"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="fecha_devolucion"
+                      >Fecha de Devolución Esperada</label
+                    >
+                    <input
+                      type="date"
+                      id="fecha_devolucion"
+                      name="fecha_devolucion"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-save">
+                  <i class="fas fa-save"></i> Registrar Préstamo
+                </button>
+                <a href="{{ url_for('prestamos') }}" class="btn-cancel">
+                  <i class="fas fa-times"></i> Cancelar
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>

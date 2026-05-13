@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Sistema de Inventario Deportivo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/styles.css') }}"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Navbar -->
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <i class="fas fa-university"></i>
+          <span>Fundación Escuela Tecnológica de Neiva</span>
+        </div>
+        <div class="navbar-menu">
+          <a href="{{ url_for('dashboard') }}" class="nav-link active"
+            ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+          >
+          <a href="{{ url_for('inventario') }}" class="nav-link"
+            ><i class="fas fa-boxes"></i> Inventario</a
+          >
+          <a href="{{ url_for('estudiantes') }}" class="nav-link"
+            ><i class="fas fa-users"></i> Estudiantes</a
+          >
+          <a href="{{ url_for('prestamos') }}" class="nav-link"
+            ><i class="fas fa-handshake"></i> Préstamos</a
+          >
+          <a href="{{ url_for('reportes') }}" class="nav-link"
+            ><i class="fas fa-chart-bar"></i> Reportes</a
+          >
+          <a href="{{ url_for('logout') }}" class="nav-link logout"
+            ><i class="fas fa-sign-out-alt"></i> Salir</a
+          >
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="container-fluid">
+          <h1 class="page-title">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </h1>
+
+          <!-- Statistics Cards -->
+          <div class="row stats-row">
+            <div class="col-md-3">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-boxes"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ total_implementos }}</h3>
+                  <p>Implementos Totales</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-hand-holding"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ implementos_prestados }}</h3>
+                  <p>Implementos Prestados</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ total_estudiantes }}</h3>
+                  <p>Estudiantes Registrados</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ stock_bajo }}</h3>
+                  <p>Stock Bajo</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts and Recent Activity -->
+          <div class="row">
+            <div class="col-md-8">
+              <div class="chart-card">
+                <h4>
+                  <i class="fas fa-chart-pie"></i> Distribución por Categoría
+                </h4>
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="activity-card">
+                <h4><i class="fas fa-history"></i> Actividad Reciente</h4>
+                <ul class="activity-list">
+                  {% for actividad in actividad_reciente %}
+                  <li>
+                    <span class="activity-date"
+                      >{{ actividad[0].strftime('%d/%m/%Y') }}</span
+                    >
+                    <span class="activity-desc"
+                      >{{ actividad[1] }} prestó {{ actividad[3] }} {{
+                      actividad[2] }}</span
+                    >
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>
