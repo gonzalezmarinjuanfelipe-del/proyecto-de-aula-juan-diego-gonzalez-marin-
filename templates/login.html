@@ -55,6 +55,14 @@
         </div>
         {% endfor %} {% endif %} {% endwith %}
         <div class="login-footer">
+          <p>
+            ¿No tienes cuenta?
+            <a
+              href="{{ url_for('register') }}"
+              style="color: #43a047; text-decoration: none; font-weight: 600"
+              >Regístrate aquí</a
+            >
+          </p>
           <p>Autor: Juan Diego Gonzalez Marin</p>
         </div>
       </div>

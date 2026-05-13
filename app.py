@@ -13,15 +13,16 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from openpyxl import Workbook
 import io
+from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB
 
 app = Flask(__name__)
 app.secret_key = 'tu_clave_secreta_aqui'  # Cambiar en producción
 
 # Configuración MySQL
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'  # Cambiar según tu configuración
-app.config['MYSQL_PASSWORD'] = ''  # Cambiar según tu configuración
-app.config['MYSQL_DB'] = 'inventario_deportivo'
+app.config['MYSQL_HOST'] = MYSQL_HOST
+app.config['MYSQL_USER'] = MYSQL_USER
+app.config['MYSQL_PASSWORD'] = MYSQL_PASSWORD
+app.config['MYSQL_DB'] = MYSQL_DB
 
 mysql = MySQL(app)
 
@@ -55,6 +56,68 @@ def login():
             flash('Credenciales incorrectas', 'error')
     
     return render_template('login.html')
+
+# Ruta de registro
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        nombre = request.form.get('nombre')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # Validaciones
+        errors = []
+        
+        if not username or len(username) < 3:
+            errors.append('El usuario debe tener al menos 3 caracteres')
+        
+        if not nombre or len(nombre) < 3:
+            errors.append('El nombre debe tener al menos 3 caracteres')
+        
+        if not email or '@' not in email:
+            errors.append('Email inválido')
+        
+        if not password or len(password) < 6:
+            errors.append('La contraseña debe tener al menos 6 caracteres')
+        
+        if password != confirm_password:
+            errors.append('Las contraseñas no coinciden')
+        
+        if not errors:
+            cur = mysql.connection.cursor()
+            
+            # Verificar si el usuario ya existe
+            cur.execute("SELECT id FROM usuarios WHERE username = %s OR email = %s", (username, email))
+            if cur.fetchone():
+                errors.append('El usuario o email ya están registrados')
+            
+            if not errors:
+                try:
+                    # Hash la contraseña
+                    password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                    
+                    # Insertar nuevo usuario
+                    cur.execute("""
+                        INSERT INTO usuarios (username, password_hash, nombre, email, rol)
+                        VALUES (%s, %s, %s, %s, %s)
+                    """, (username, password_hash, nombre, email, 'usuario'))
+                    mysql.connection.commit()
+                    
+                    flash('¡Registro exitoso! Por favor inicia sesión', 'success')
+                    cur.close()
+                    return redirect(url_for('login'))
+                except Exception as e:
+                    errors.append(f'Error al registrar: {str(e)}')
+            
+            cur.close()
+        
+        # Si hay errores, mostrarlos
+        for error in errors:
+            flash(error, 'error')
+    
+    return render_template('register.html')
 
 # Ruta de logout
 @app.route('/logout')
